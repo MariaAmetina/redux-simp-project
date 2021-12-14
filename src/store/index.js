@@ -1,37 +1,19 @@
-import { createSlice, configureStore } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 
-const initialState = { counter: 0, showCounter: true };
+import counterSliceReducer from "./counter-slice";
+import authSliceReducer from "./auth-slice";
 
-const counterSlice = createSlice({
-  name: "counter",
-  initialState,
-  reducers: {
-    increment(state) {
-      //в createSlice редакс тулкита редьюсерах можно изменять существующий стейт, т.к. redux toolkit сам клонирует
-      // и автоматически переписывает объект стейта на новый, разработчику самому это делать не нужно
-      state.counter++;
-    },
-    decrement(state) {
-      state.counter--;
-    },
-    increase(state, action) {
-      state.counter += action.payload;
-    },
-    toggleCounter(state) {
-      state.showCounter = !state.showCounter;
-    },
-  },
+const store = configureStore({
+  //reducer: counterSlice.reducer, //.reducer - это верно, хоть и в counterSlice написано reducers
+  //reducer: { counter: counterSlice.reducer, auth: authSlice.reducer }, //если slice-ов много, то можно передать через объект и при сборке они объединяться в один редьюсер, ключ (counter) придумываешь сама
+  reducer: {
+    counter: counterSliceReducer,
+    auth: authSliceReducer,
+  }, //если slice-ов много, то можно передать через объект и при сборке они объединяться в один редьюсер, ключ (counter) придумываешь сама
 });
 
 //createSlice создает actions сам
 //counterSlice.actions.toggleCounter(); //этот вызов возвращает объект с автоматически сгенерированным типом, если раньше придумывали название сами и передавали, то тут автоматически
 //объект типа { type: 'сгенерированный уникальный айди' }
-
-const store = configureStore({
-  //reducer: { counter: counterSlice.reducer } //если slice-ов много, то можно передать через объект и при сборке они объединяться в один редьюсер, ключ (counter) придумываешь сама
-  reducer: counterSlice.reducer, //.reducer - это верно, хоть и в counterSlice написано reducers
-});
-
-export const counterActions = counterSlice.actions;
 
 export default store;
